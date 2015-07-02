@@ -1002,14 +1002,14 @@ module.exports = (function(){
     // region Vevo API
     //===============================
 
-    searchVideo: function(videoObj){
+    searchVideo: function(videoObj, token){
 
       var artistName = videoObj.artist_name || videoObj.main_artist_name;
 
       var urlFormat = 'https://apiv2.vevo.com/search?query={{query}}&sortBy=MostViewedLastMonth&videosLimit=1&skippedVideos=0&artistsLimit=0&&token={{key}}';
       var interpolateVals = {
         query: artistName + ' - ' + videoObj.title,
-        key: '_TMw_fGgJHvzr84MqwK1eWhBgbdebZhAm_y3W1ou-sU1.1435942800.uUdYVnZoknySkwqMs5l5O92xC1gjZvlsMOU04GZRxBXWMu2HzNwXObWQD0F_LlADBGfuOn0-JzDApT70zzBLeUVAfio1'
+        key: token
       };
 
       // interpolate url with our variables
@@ -1061,13 +1061,13 @@ module.exports = (function(){
         }
       ]
     */
-    getStreams: function(isrc){
+    getStreams: function(isrc, token){
         //NOTE: update token since we need to refresh it daily
 
         var urlFormat = 'http://apiv2.vevo.com/video/{{isrc}}/streams/mp4?token={{key}}';
         var interpolateVals = {
           isrc: isrc,
-          key: '_TMw_fGgJHvzr84MqwK1eWhBgbdebZhAm_y3W1ou-sU1.1435942800.uUdYVnZoknySkwqMs5l5O92xC1gjZvlsMOU04GZRxBXWMu2HzNwXObWQD0F_LlADBGfuOn0-JzDApT70zzBLeUVAfio1'
+          key: token
         };
 
         // interpolate url with our variables
@@ -1092,6 +1092,35 @@ module.exports = (function(){
         });
 
         return promise;
+    },
+
+    getVevoToken: function(){
+
+      var url = 'https://apiv2.vevo.com/oauth/token';
+      var postData = {
+        'client_id': "e962a4ae0b634065b774729ee601a82b",
+        'client_secret': "9794fb3bcd4b47488380c2bc9e5ef618",
+        'grant_type': 'client_credentials',
+        'country': "us",
+        'locale': "en-us"
+      };
+
+      var promise = new Promise(function(resolve, reject){
+          request
+            .post(url)
+            .send(postData)
+            .end(function(err, res){
+              if(err){
+                console.log("err: ", err);
+                reject(err);
+              }else{
+                console.log("res: ", res.body);
+                resolve(res.body);
+              }
+            });
+      });
+
+      return promise;
     }
 
     //===============================

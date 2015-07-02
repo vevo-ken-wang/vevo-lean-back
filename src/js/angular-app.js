@@ -46,7 +46,14 @@ app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', funct
 
 }]);
 
-app.controller('AppCtrl', ['$rootScope', '$scope', '$window', '$timeout', 'AppState', function($rootScope, $scope, $window, $timeout, appState){
+app.controller('AppCtrl', ['$rootScope', '$scope', '$window', '$timeout', 'AppState', 'ApiService', function($rootScope, $scope, $window, $timeout, appState, apiService){
+
+  apiService.getVevoToken()
+    .then(function(res){
+      appState.vevoToken = res.access_token;
+    }, function(err){
+      alert('Doh, couldnt get a valid vevo session token, try again.');
+    });
 
   // check for username, if it doesnt exist, we need to make a user first before init to true
   var leanBackUserId = $window.localStorage.getItem('lean-back-user-id');
@@ -169,7 +176,7 @@ app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '
             var isrc = track.isrc || track.vevo_id;
 
             // NOTE: workaround hack here in order to find the correct isrc since musicgraph is returning incorrect isrcs
-            return apiService.searchVideo(track);
+            return apiService.searchVideo(track, appState.vevoToken);
         }, function(err){
           console.log('error getting track');
         })
@@ -181,7 +188,7 @@ app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '
 
               // make sure the returned search result actually matches what we are looking for
               if(video.title.toLowerCase() === videoObj.track.title.toLowerCase()){
-                return apiService.getStreams(isrc);
+                return apiService.getStreams(isrc, appState.vevoToken);
               }
             }
 
