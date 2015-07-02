@@ -1,9 +1,9 @@
 <div class="splash" ng-class="{ 'gone': !showSplash }">
   <div class="loader">
-    <!-- <p>Hi there!</p>
-    <p>Welcome to our new experience</p> -->
+    <p class="message" ng-class="{ 'enter': showMessage1Enter, 'leave': showMessage1Leave}">Hi there!</p>
+    <p class="message" ng-class="{ 'enter': showMessage2Enter, 'leave': showMessage2Leave}">Welcome to our new experience</p>
 
-    <div class="username-form">
+    <div class="username-form message" ng-class="{ 'enter': showMessage3Enter, 'leave': showMessage3Leave}">
       <p>Enter a username</p>
       <form class="ui fluid icon input massive" ng-submit="createUser()">
         <div>
@@ -13,7 +13,7 @@
       </form>
     </div>
 
-    <!-- <p>Lean back and enjoy Vevo!</p> -->
+    <p class="username-form message" ng-class="{ 'enter': showMessage4Enter, 'leave': showMessage4Leave}">Lean back and enjoy Vevo!</p>
     <div class="spinner" ng-show="loading"></div>
   </div>
 </div>

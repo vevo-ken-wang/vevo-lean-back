@@ -524,8 +524,31 @@ app.directive('splash', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
     restrict: 'E',
     templateUrl: '/views/directives/splash.html',
     link: function($scope, $element, $attr, $ctrl){
+
+        // onboarding message
+        $timeout(function(){
+          $scope.showMessage1Enter = true;
+        }, 1000);
+
+        $timeout(function(){
+          $scope.showMessage1Leave = true;
+        }, 2500);
+
+        $timeout(function(){
+          $scope.showMessage2Enter = true;
+        }, 4000);
+
+        $timeout(function(){
+          $scope.showMessage2Leave = true;
+        }, 5500);
+
+        $timeout(function(){
+          $scope.showMessage3Enter = true;
+        }, 7500);
+
         $scope.loading = false;
         $scope.createUser = function(){
+          $scope.showMessage3Leave = true;
           $scope.loading = true;
 
           var userId = $scope.username + '-' + guid();
@@ -543,7 +566,12 @@ app.directive('splash', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
 
                 $scope.loading = false;
 
-                $rootScope.$emit('createuser:done');
+                $scope.showMessage4Enter = true;
+
+                $timeout(function(){
+                    $rootScope.$emit('createuser:done');
+                }, 2500);
+
               }, 2000); //delay for better experience
 
             }, function(err){
