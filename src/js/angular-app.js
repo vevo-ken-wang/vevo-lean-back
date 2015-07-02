@@ -558,35 +558,59 @@ app.directive('splash', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
           $scope.showMessage3Leave = true;
           $scope.loading = true;
 
-          var userId = $scope.username + '-' + guid();
+          var userId = $scope.username;
           var username = $scope.username;
-          console.log('create user', userId);
-          apiService.createUser(userId)
-            .then(function(user){
+          console.log('create/login user', userId);
 
-              console.log('user', user);
-
-              $timeout(function(){
-                // save user info locally
-                $window.localStorage.setItem('lean-back-user-id', user.user_id);
-                $window.localStorage.setItem('lean-back-username', username);
-
-                $scope.loading = false;
-
-                $scope.showMessage4Enter = true;
+          apiService.getUser(userId)
+            .then(function(res){
+              if(res && res.user_id === userId){
+                console.log('user', res);
 
                 $timeout(function(){
-                    $rootScope.$emit('createuser:done');
-                }, 2500);
+                  // save user info locally
+                  $window.localStorage.setItem('lean-back-user-id', res.user_id);
+                  $window.localStorage.setItem('lean-back-username', username);
 
-              }, 2000); //delay for better experience
+                  $scope.loading = false;
 
-            }, function(err){
-              alert('Error creating user, please try again later.' + err.toString());
+                  $scope.showMessage4Enter = true;
 
-              $timeout(function(){
-                $scope.loading = false;
-              });
+                  $timeout(function(){
+                      $rootScope.$emit('createuser:done');
+                  }, 2500);
+
+                }, 2000); //delay for better experience
+              }else{
+                // create user
+                apiService.createUser(userId)
+                  .then(function(user){
+
+                    console.log('user', user);
+
+                    $timeout(function(){
+                      // save user info locally
+                      $window.localStorage.setItem('lean-back-user-id', user.user_id);
+                      $window.localStorage.setItem('lean-back-username', username);
+
+                      $scope.loading = false;
+
+                      $scope.showMessage4Enter = true;
+
+                      $timeout(function(){
+                          $rootScope.$emit('createuser:done');
+                      }, 2500);
+
+                    }, 2000); //delay for better experience
+
+                  }, function(err){
+                    alert('Error creating user, please try again later.' + err.toString());
+
+                    $timeout(function(){
+                      $scope.loading = false;
+                    });
+                  });
+              }
             })
         }
     }
