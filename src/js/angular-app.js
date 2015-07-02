@@ -479,4 +479,18 @@ app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
   };
 }]);
 
+
+app.directive('splash', ['$rootScope', '$timeout', '$sce', '$interval', '$location', function($rootScope, $timeout, $sce, $interval, $location){
+  return {
+    restrict: 'E',
+    templateUrl: '/views/directives/splash.html',
+    link: function($scope, $element, $attr, $ctrl){
+        $scope.showSplash = true;
+
+        $timeout(function(){
+          $scope.showSplash = false;
+        }, 3500);
+    }
+  };
+}]);
 //===============================
