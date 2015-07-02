@@ -1,0 +1,39 @@
+<div class="video-meta ui" ng-class="{ 'visible': videoReady }">
+  <div class="back" ng-click="back()"><i class="ui icon chevron left"></i></div>
+  <div class="artist-name">{{video.track.artist_name || video.track.main_artist_name}} <span class="track-title">{{video.track.title}}</span></div>
+</div>
+
+<div class="player-controls ui" ng-class="{ 'visible': videoReady }">
+  <i class="icon thumbs outline up" ng-click="like()" ng-if="!liked"></i>
+  <i class="icon thumbs up" ng-if="liked"></i>
+  <i class="icon thumbs outline down" ng-click="unlike()" ng-if="!liked"></i>
+  <i class="icon thumbs outline down disabled" ng-if="liked"></i>
+  <i class="icon play" ng-show="!isPlaying" ng-click="play()"></i>
+  <i class="icon pause" ng-show="isPlaying" ng-click="pause()"></i>
+  <i class="icon step forward" ng-click="skip()"></i>
+  <div class="play-time">
+    {{currentTime}} / {{duration}}
+  </div>
+</div>
+
+<video id="player" ng-src="{{trustSrc(video.url)}}" ng-class="{ 'show': videoMode }" autoplay/>
+
+
+<div class="video-loading" ng-class="{ 'visible': !videoReady && showLoader }">
+  <div class="loader">
+    <p>Stay tuned for your next song</p>
+    <div class="spinner"></div>
+  </div>
+</div>
+
+<div class="video-summary video-loading" ng-class="{ 'visible': showSummary}">
+  <div class="container">
+    <div class="time-remaining" ng-click="doneWithSummary()"><i class="ui icon check circle"></i> Done</div>
+    <p>Here's what you watched</p>
+    <ul>
+      <li ng-repeat="play in playedVideos track by $index">
+        <span class="action">you {{getActionText(play.action)}}</span><span class="artist-name">{{play.artist_name}}</span> <span class="track-title">{{play.track_title || play.video_title}}</span>
+      </li>
+    </ul>
+  </div>
+</div>

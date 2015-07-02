@@ -1,0 +1,19 @@
+<div class="my-stations-component ui">
+  <h2 class="ui center aligned icon header component-header">
+    <i class="circular heart icon"></i>
+    My Stations
+  </h2>
+  <div class="ui segment" ng-class="{ 'loading': searching }">
+    <div class="ui divided items">
+      <div class="item" ng-repeat="station in stations track by $index">
+        <div class="ui tiny image artist-art">
+
+        </div>
+        <div class="content">
+          <a class="header" ng-bind="station.name" ng-click="selectStation($index)"></a>
+          <div class="description">{{station.meta.includes[0].main_genre}} | {{station.meta.includes[0].decade}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

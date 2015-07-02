@@ -1,0 +1,30 @@
+<div class="search-component ui">
+  <div class="search-box-container" ng-class="{'has-results': !isResetSearch }">
+    <h2 class="ui center aligned icon header component-header">
+      <i class="circular sound icon"></i>
+      Lean Back Stations
+    </h2>
+    <form class="ui fluid icon input" ng-class="{ 'loading': searching }" ng-submit="search()">
+        <input id="search-box" name="searchTerm" type="text" placeholder="Search Artists..." ng-model="searchTerm" autocomplete="off" />
+        <i class="search icon"></i>
+    </form>
+  </div>
+
+  <div class="search-results ui segment" ng-class="{ 'show' : !isResetSearch }">
+    <div class="ui divided items">
+      <div class="item" ng-repeat="result in results track by $index">
+        <div class="ui tiny image artist-art" ng-class="result.name.substring(0,1)">
+
+        </div>
+        <div class="content">
+          <a class="header" ng-bind="result.name" ng-click="selectArtist($index)"></a>
+          <div class="description" ng-if="result.main_genre && result.country_of_origin">{{result.main_genre}} | {{result.country_of_origin}}</div>
+          <div class="description" ng-if="result.main_genre && !result.country_of_origin">{{result.main_genre}} | -</div>
+          <div class="description" ng-if="!result.main_genre && result.country_of_origin">na | {{result.country_of_origin}}</div>
+          <div class="description" ng-if="!result.main_genre && !result.country_of_origin">na | -</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

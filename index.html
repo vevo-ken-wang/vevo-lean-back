@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html ng-app="app">
+  <head>
+    <meta charset="utf-8">
+    <title>Vevo Lean Back</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.css"/>
+    <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,700' rel='stylesheet' type='text/css'>
+    <style>
+      .main-container{
+        padding: 50px 50px;
+      }
+
+      .search-component input[type=text]{
+        width: 100%!important;
+      }
+
+      .search-component .search-results{
+        margin-top: 50px;
+      }
+
+      .search-component .artist-art{
+        background-color: #2196F3;
+      }
+
+      .search-component .search-box-container{
+        transition: all 0.5s ease;
+        position: relative;
+        top: 20vh;
+      }
+
+      .component-header i {
+        color: #fff!important;
+        background-color: #E91E63!important;
+      }
+
+      .search-component .search-box-container.has-results{
+        top: 0;
+      }
+
+      .search-results{
+        transition: all 0.5s ease;
+        opacity: 0;
+      }
+
+      .search-results.show{
+        opacity: 1;
+      }
+
+
+      video{
+        width: 100vw;
+        height: 100vh;
+        display: none;
+        position: fixed;
+        bottom: 0;
+        padding-top: 50px;
+        padding-bottom: 50px;
+      }
+
+      .video-mode video {
+        display: block!important;
+        background-color: #000;
+      }
+
+      .video-mode .main-container {
+        display: none;
+      }
+
+      .player-controls{
+        width: 100vw;
+        height: 50px;
+        background-color: rgba(50,50,50,.75);
+        position: fixed;
+        bottom: -50px;
+        font-size: 20px;
+        line-height: 50px;
+        color: #fff;
+        text-align: center;
+        opacity: 0;
+        z-index: 1000;
+        transition: all 0.3s ease-in-out;
+      }
+
+      .player-controls.visible{
+        bottom: 0px;
+        opacity: 1;
+      }
+
+      .player-controls i{
+        cursor: pointer;
+      }
+
+      .player-controls i:hover{
+        color: #2196F3;
+      }
+
+      .player-controls .play-time{
+        position: absolute;
+        top: 0;
+        right: 20px;
+        font-family: 'Lato', sans-serif;
+        font-size: 12px;
+        line-height: 50px;
+        font-weight: 300;
+        opacity: .5;
+      }
+
+      .video-mode .player-controls{
+
+      }
+
+      .video-meta{
+        width: 100vw;
+        position: fixed;
+        top: -50px;
+        height: 50px;
+        background-color: rgba(50,50,50,.75);
+        color: #fff;
+        text-align: center;
+        opacity: 0;
+        transition: all 0.3s ease-in-out;
+        z-index: 1000;
+      }
+
+      .video-meta.visible{
+        top: 0px;
+        opacity: 1;
+      }
+
+      .video-meta .artist-name{
+        font-family: 'Lato', sans-serif;
+        font-weight: 700;
+        font-size: 22px;
+        line-height: 50px;
+      }
+
+      .video-meta .track-title{
+        font-family: 'Lato', sans-serif;
+        font-weight: 100;
+        font-size: 22px;
+        padding-left: 10px;
+      }
+
+      .video-meta .back{
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        left: 0;
+        top: 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .video-meta .back:hover{
+        background-color: #333;
+      }
+
+      .video-meta .back i{
+        line-height: 50px;
+      }
+
+      .video-mode .video-meta{
+        display: block;
+        opacity: 1;
+      }
+
+      .header-menu{
+        z-index: 2000;
+      }
+
+      .video-loading{
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        z-index: -99;
+        background-color: #000;
+        transition: all 0.4s ease;
+        opacity: 0;
+      }
+
+      .video-loading.visible{
+        opacity: 1;
+        z-index: 9999;
+      }
+
+      .video-loading p {
+        font-family: 'Lato', sans-serif;
+        font-weight: 100;
+        font-size: 30px;
+        color: rgba(255,255,255,0.5);
+        text-align: center;
+        padding: 0;
+        margin: 0;
+      }
+
+      .video-loading .loader{
+        position: relative;
+        top: calc(50% - 120px);
+      }
+
+      .video-summary{
+        font-family: 'Lato', sans-serif!important;
+        font-weight: 100;
+        font-size: 30px;
+        z-index: -99;
+        opacity: 0;
+        transition: all 0.4s ease;
+      }
+
+      .video-summary.visible{
+        z-index: 9999;
+        opacity: 1;
+      }
+
+      .video-summary ul{
+        width: 70vw;
+        margin: 40px auto;
+        height: 70vh;
+        overflow: scroll;
+      }
+
+      .video-summary ul li{
+        list-style: none;
+        color: #ccc;
+        font-size: 22px;
+        border-bottom: 1px solid rgba(255,255,255,0.3);
+        padding: 10px 0;
+      }
+
+      .video-summary ul li .artist-name{
+          font-weight: 700;
+          padding-right: 10px;
+      }
+
+      .video-summary .time-remaining{
+        position: absolute;
+        bottom: 20px;
+        left: 0;
+        font-size: 22px;
+        padding: 20px;
+        color: #ccc;
+        text-align: center;
+        width: 100vw;
+        cursor: pointer;
+      }
+
+      .video-summary .time-remaining:hover{
+        color: rgba(255,255,255,0.5);
+      }
+
+      .video-summary .container{
+        padding: 50px;
+      }
+
+      .video-summary .action{
+        font-size: 14px;
+        display: inline-block;
+        width: 100px;
+        color: #bbb;
+        font-weight: 500;
+      }
+
+      .spinner {
+        width: 80px;
+        height: 80px;
+        margin: 100px auto;
+        background-color: #fff;
+        margin-top: 15px;
+
+        border-radius: 100%;
+        -webkit-animation: scaleout 1.0s infinite ease-in-out;
+        animation: scaleout 1.0s infinite ease-in-out;
+      }
+
+      @-webkit-keyframes scaleout {
+        0% { -webkit-transform: scale(0.0) }
+        100% {
+          -webkit-transform: scale(1.0);
+          opacity: 0;
+        }
+      }
+
+      @keyframes scaleout {
+        0% {
+          transform: scale(0.0);
+          -webkit-transform: scale(0.0);
+        } 100% {
+          transform: scale(1.0);
+          -webkit-transform: scale(1.0);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body ng-controller="AppCtrl" ng-class="{ 'video-mode' : videoMode }">
+    <div class="ui stackable menu header-menu">
+      <div class="item">
+        <img src="http://cdn-img.easyicon.net/png/11266/1126624.gif" height="20px">
+      </div>
+      <a class="item" href="#/">Create Stations</a>
+      <a class="item" href="#/stations">My Stations</a>
+    </div>
+
+    <div class="main-container">
+      <div class="ui page grid">
+        <div id="content" class="column" ng-view></div>
+      </div>
+    </div>
+
+    <player></player>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.js"></script>
+    <script type="text/javascript" src="build/app.js"></script>
+  </body>
+</html>
