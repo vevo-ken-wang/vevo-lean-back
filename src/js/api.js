@@ -1009,7 +1009,7 @@ module.exports = (function(){
       var urlFormat = 'https://apiv2.vevo.com/search?query={{query}}&sortBy=MostViewedLastMonth&videosLimit=1&skippedVideos=0&artistsLimit=0&&token={{key}}';
       var interpolateVals = {
         query: artistName + ' - ' + videoObj.title,
-        key: '_TMw_fGgJHvzr84MqwK1eWhBgbdebZhAm_y3W1ou-sU1.1435852800.C_sDhraJOjtK_TOQ6LIuGFsinYQI7D1pOjtLufcMyRhtroJKmhpmh2zS93pAl87QEOy_87PJ_uyePl9rL1oLFgfKryY1'
+        key: '_TMw_fGgJHvzr84MqwK1eWhBgbdebZhAm_y3W1ou-sU1.1435942800.uUdYVnZoknySkwqMs5l5O92xC1gjZvlsMOU04GZRxBXWMu2HzNwXObWQD0F_LlADBGfuOn0-JzDApT70zzBLeUVAfio1'
       };
 
       // interpolate url with our variables
@@ -1067,7 +1067,7 @@ module.exports = (function(){
         var urlFormat = 'http://apiv2.vevo.com/video/{{isrc}}/streams/mp4?token={{key}}';
         var interpolateVals = {
           isrc: isrc,
-          key: '_TMw_fGgJHvzr84MqwK1eWhBgbdebZhAm_y3W1ou-sU1.1435852800.C_sDhraJOjtK_TOQ6LIuGFsinYQI7D1pOjtLufcMyRhtroJKmhpmh2zS93pAl87QEOy_87PJ_uyePl9rL1oLFgfKryY1'
+          key: '_TMw_fGgJHvzr84MqwK1eWhBgbdebZhAm_y3W1ou-sU1.1435942800.uUdYVnZoknySkwqMs5l5O92xC1gjZvlsMOU04GZRxBXWMu2HzNwXObWQD0F_LlADBGfuOn0-JzDApT70zzBLeUVAfio1'
         };
 
         // interpolate url with our variables
