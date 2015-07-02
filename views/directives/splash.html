@@ -4,10 +4,10 @@
     <p class="message" ng-class="{ 'enter': showMessage2Enter, 'leave': showMessage2Leave}">Welcome to our new experience</p>
 
     <div class="username-form message" ng-class="{ 'enter': showMessage3Enter, 'leave': showMessage3Leave}">
-      <p>Enter a username</p>
+      <p>Enter new or existing username</p>
       <form class="ui fluid icon input massive" ng-submit="createUser()">
         <div>
-          <input id="username-box" name="username" type="text" placeholder="New Username..." ng-model="username" autocomplete="off" />
+          <input id="username-box" name="username" type="text" placeholder="Enter Username..." ng-model="username" autocomplete="off" />
           <i class="user icon"></i>
         </div>
       </form>
