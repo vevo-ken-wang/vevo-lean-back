@@ -6,6 +6,16 @@ var R = require('ramda');
 var app = angular.module('app', ['ngRoute']);
 window.api = api; //NOTE: FOR DEBUGGING
 
+window.guid = function() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
+
 app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', function($routeProvider, $locationProvider, $sceDelegateProvider){
 
   // // whitelist to allow cross domain stuff
@@ -36,11 +46,34 @@ app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', funct
 
 }]);
 
-app.controller('AppCtrl', ['$rootScope', function($rootScope){
+app.controller('AppCtrl', ['$rootScope', '$scope', '$window', '$timeout', 'AppState', function($rootScope, $scope, $window, $timeout, appState){
+
+  // check for username, if it doesnt exist, we need to make a user first before init to true
+  var leanBackUserId = $window.localStorage.getItem('lean-back-user-id');
+  var leanBackUsername = $window.localStorage.getItem('lean-back-username');
+  console.log('init user info: ', leanBackUserId);
+  if(leanBackUserId){
+    $scope.init = true;
+    $scope.username = leanBackUsername;
+    appState.userId = leanBackUserId;
+  }else{
+    // show the splash sign up screen
+  }
 
   $rootScope.$on('setVideoMode', function(evt, flag){
     console.log("setting video mode", flag);
     $rootScope.videoMode = flag;
+  });
+
+
+  $rootScope.$on('createuser:done', function(evt, data){
+    $timeout(function(){
+      var leanBackUserId = $window.localStorage.getItem('lean-back-user-id');
+      var leanBackUsername = $window.localStorage.getItem('lean-back-username');
+      $scope.init = true;
+      $scope.username = leanBackUsername;
+      appState.userId = leanBackUserId;
+    });
   });
 
 }]);
@@ -82,7 +115,7 @@ app.controller('SearchCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '$
     appState.artistIdToNameMap[artist.id] = artist.name;
 
     $scope.creatingStation = true;
-    var userId = 'vevo-2';
+    var userId = appState.userId;
     apiService.createStationByArtist(userId, [artist.vevo_id])
       .then(function(res){
         $timeout(function(){
@@ -101,7 +134,7 @@ app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '
   $rootScope.$emit('setVideoMode', true);
 
   // TODO: get user id
-  var userId = 'vevo-2';
+  var userId = appState.userId;
 
   // grab station id from route params
   appState.stationId = $routeParams.stationId;
@@ -235,11 +268,11 @@ app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '
 
 }]);
 
-app.controller('MyStationsCtrl', ['$scope', '$rootScope', 'ApiService', '$timeout', '$location', function($scope, $rootScope, apiService, $timeout, $location){
+app.controller('MyStationsCtrl', ['$scope', '$rootScope', 'ApiService', '$timeout', '$location', 'AppState', function($scope, $rootScope, apiService, $timeout, $location, appState){
   console.log('my stations');
   $scope.stations = [];
 
-  var userId = 'vevo-2';
+  var userId = appState.userId;
   apiService.getUserStations(userId, { limit: 100 })
     .then(function(stations){
       $timeout(function(){
@@ -277,7 +310,7 @@ app.factory('AppState', function(){
 // region Directives
 //===============================
 
-app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$location', function($rootScope, $timeout, $sce, $interval, $location){
+app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$location', '$document', function($rootScope, $timeout, $sce, $interval, $location, $document){
   return {
     restrict: 'E',
     templateUrl: '/views/directives/player.html',
@@ -308,6 +341,10 @@ app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
           $scope.liked = false;
 
           $scope.duration = getTimeText(videoObj.track.duration);
+
+          // also update page title
+          var artist = (videoObj.track.artist_name || videoObj.track.main_artist_name);
+          $document.title = artist + " - " + videoObj.track.title;
         });
       });
 
@@ -331,6 +368,8 @@ app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
             $scope.showLoader = false;
             $scope.duration = '-';
             $scope.currentTime = '-';
+
+            $document.title = 'Vevo Lean Back';
           });
         }else{
           console.log('start video player');
@@ -480,16 +519,41 @@ app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
 }]);
 
 
-app.directive('splash', ['$rootScope', '$timeout', '$sce', '$interval', '$location', function($rootScope, $timeout, $sce, $interval, $location){
+app.directive('splash', ['$rootScope', '$timeout', '$sce', '$interval', '$location', 'ApiService', '$window', function($rootScope, $timeout, $sce, $interval, $location, apiService, $window){
   return {
     restrict: 'E',
     templateUrl: '/views/directives/splash.html',
     link: function($scope, $element, $attr, $ctrl){
-        $scope.showSplash = true;
+        $scope.loading = false;
+        $scope.createUser = function(){
+          $scope.loading = true;
 
-        $timeout(function(){
-          $scope.showSplash = false;
-        }, 3500);
+          var userId = $scope.username + '-' + guid();
+          var username = $scope.username;
+          console.log('create user', userId);
+          apiService.createUser(userId)
+            .then(function(user){
+
+              console.log('user', user);
+
+              $timeout(function(){
+                // save user info locally
+                $window.localStorage.setItem('lean-back-user-id', user.user_id);
+                $window.localStorage.setItem('lean-back-username', username);
+
+                $scope.loading = false;
+
+                $rootScope.$emit('createuser:done');
+              }, 2000); //delay for better experience
+
+            }, function(err){
+              alert('Error creating user, please try again later.' + err.toString());
+
+              $timeout(function(){
+                $scope.loading = false;
+              });
+            })
+        }
     }
   };
 }]);

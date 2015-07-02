@@ -1,6 +1,19 @@
 <div class="splash" ng-class="{ 'gone': !showSplash }">
   <div class="loader">
-    <p>Lean back and enjoy Vevo!</p>
-    <div class="spinner"></div>
+    <!-- <p>Hi there!</p>
+    <p>Welcome to our new experience</p> -->
+
+    <div class="username-form">
+      <p>Enter a username</p>
+      <form class="ui fluid icon input massive" ng-submit="createUser()">
+        <div>
+          <input id="username-box" name="username" type="text" placeholder="New Username..." ng-model="username" autocomplete="off" />
+          <i class="user icon"></i>
+        </div>
+      </form>
+    </div>
+
+    <!-- <p>Lean back and enjoy Vevo!</p> -->
+    <div class="spinner" ng-show="loading"></div>
   </div>
 </div>

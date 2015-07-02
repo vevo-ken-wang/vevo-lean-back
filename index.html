@@ -47,6 +47,19 @@
         opacity: 1;
       }
 
+      .header-menu{
+        position: relative;
+        top: -50px;
+        transition: all 0.3s ease;
+      }
+
+      .init-complete .header-menu{
+        top: 0px;
+      }
+
+      .video-mode .header-menu{
+        display: none;
+      }
 
       video{
         width: 100vw;
@@ -274,8 +287,7 @@
       }
 
       .splash.gone{
-        opacity: 0;
-        z-index: -9999;
+
       }
 
       .splash p {
@@ -323,15 +335,65 @@
           opacity: 0;
         }
       }
+
+      .username-form{
+        text-align: center;
+      }
+
+      .username-form form{
+        margin-top: 30px;
+      }
+
+      .username-form input{
+        background-color: #ccc;
+        font-family: 'Lato', sans-serif!important;
+        font-weight: 300!important;
+        padding-left: 60px!important;
+        border-color: #555!important;
+        background-color: black!important;
+        color: #fff!important;
+      }
+
+      .username-form form div{
+        position: relative;
+        display: inline-block;
+      }
+
+      .username-form form div i {
+        position: absolute;
+        left: 10px;
+        top: 14px;
+        font-size: 30px;
+        color: #555;
+      }
+
+      #username-box::-webkit-input-placeholder {
+         color: #555;
+      }
+
+      body{
+        background-color: black;
+      }
+
+      body.init-complete{
+        background-color: #f7f7f7;
+      }
+
+      .username{
+        position: absolute!important;
+        right: 0px!important;
+        top: 2px!important;
+      }
     </style>
   </head>
-  <body ng-controller="AppCtrl" ng-class="{ 'video-mode' : videoMode }">
+  <body ng-controller="AppCtrl" ng-class="{ 'video-mode' : videoMode, 'init-complete': init }">
     <div class="ui stackable menu header-menu">
       <div class="item">
         <img src="http://cdn-img.easyicon.net/png/11266/1126624.gif" height="20px">
       </div>
       <a class="item" href="#/">Create Stations</a>
       <a class="item" href="#/stations">My Stations</a>
+      <span class="item username">Welcome {{username}}!</span>
     </div>
 
     <div class="main-container">
@@ -341,6 +403,7 @@
     </div>
 
     <player></player>
+    <splash ng-if="!init"></splash>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.js"></script>
