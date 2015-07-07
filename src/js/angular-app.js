@@ -183,7 +183,10 @@ app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '
         .then(function(streams){
             var stream = streams[0];
             videoObj.url = stream.url;
-            $rootScope.$emit('player:videoObj', videoObj);
+
+            $timeout(function(){
+                $rootScope.$emit('player:videoObj', videoObj);
+            }, 1500); // adding a manual delay for a smoother transition
         },function(err){
           console.log('error getting streams, retry number: ' + retries);
           tryToGetTrack(retries+1, action);
