@@ -506,7 +506,8 @@ module.exports = (function(){
       var url = S(urlFormat).template(interpolateVals).s;
 
       var postData = {
-        "artist_ids": (artistIdsArr) ? 'vevo:' + artistIdsArr.join(',vevo:') : ''
+        "artist_ids": (artistIdsArr) ? 'vevo:' + artistIdsArr.join(',vevo:') : '',
+        "catalog": "vevo"
       };
 
       var promise = new Promise(function(resolve, reject){
@@ -746,32 +747,21 @@ module.exports = (function(){
       }
 
       {
-       status: {
-         code: 0,
-         message: "Success",
-         api: "v2"
+       "status":{
+          "code":0,
+          "message":"Success",
+          "api":"v2"
        },
-       data: {
-         popularity: 0.49,
-         track_artist_id: "eb615908-a6b5-11e0-b446-00251188dd67",
-         release_year: 1992,
-         title: "Chloe Dancer/Crown of Thorns",
-         track_album_id: "a74db4d1-11a4-604d-18c1-5a1221796154",
-         entity_type: "track",
-         track_ref_id: "28551427",
-         artist_name: "Mother Love Bone",
-         main_genre: "rock",
-         label_name: "Universal/Island Def Jam",
-         track_album_ref_id: "28551393",
-         album_title: "Mother Love Bone",
-         performer_name: "Mother Love Bone",
-         track_index: "17",
-         duration: 501,
-         isrc: "USWWW0134840",
-         id: "03fe5b79-8c38-a42c-db1d-7185c7f0a353",
-         track_artist_ref_id: "23657"
+       "data":{
+          "main_artist_name":"Tori Kelly",
+          "entity_type":"video",
+          "video_artist_id":"a3ef5202-977b-1867-7b57-bad3df1985cd",
+          "vevo_id":"USUV71501567",
+          "title":"Should\u2019ve Been Us (Official)",
+          "duration":199,
+          "id":"39d06feb-b2f2-4637-92c5-b7cefd3406e0"
        }
-     }
+    }
     */
     getTrack: function(stationId, sessionId, action, options){
       console.log("API getTrack for session: ", sessionId);

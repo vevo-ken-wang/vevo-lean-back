@@ -173,30 +173,12 @@ app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '
                 videoObj.track = track;
             });
 
-            var isrc = track.isrc || track.vevo_id;
+            var isrc = track.vevo_id;
 
-            // NOTE: workaround hack here in order to find the correct isrc since musicgraph is returning incorrect isrcs
-            return apiService.searchVideo(track, appState.vevoToken);
+            return apiService.getStreams(isrc, appState.vevoToken);
         }, function(err){
-          console.log('error getting track');
-        })
-        .then(function(searchResults){
-
-            if(searchResults.videos && searchResults.videos.length > 0){
-              var video = searchResults.videos[0];
-              var isrc = video.isrc;
-
-              // make sure the returned search result actually matches what we are looking for
-              if(video.title.toLowerCase() === videoObj.track.title.toLowerCase()){
-                return apiService.getStreams(isrc, appState.vevoToken);
-              }
-            }
-
-            return Promise.reject('couldnt find matching video');
-
-        }, function(err){
-          console.log('error searching for video on vevo');
-          tryToGetTrack(retries+1, action);
+            console.log('error getting track, retry number: ' + retries);
+            tryToGetTrack(retries+1, action);
         })
         .then(function(streams){
             var stream = streams[0];
