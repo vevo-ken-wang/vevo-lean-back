@@ -160,7 +160,7 @@ app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '
     }
 
     if(retries > 5){
-      alert('try a different channel, we couldnt get videos from our api :/');
+      alert('try a different channel, we couldnt get videos from our api :/ issue for \n\nstationId: ' + appState.stationId +  '\nsessionId: ' + appState.sessionId);
     }else{
       if(retries > 0){
         action = 'error';
@@ -332,6 +332,8 @@ app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
           $scope.video = videoObj;
           $scope.showLoader = false;
           $scope.liked = false;
+          $scope.sessionId = '';
+          $scope.stationId = '';
 
           $scope.duration = getTimeText(videoObj.track.duration);
 
@@ -341,6 +343,7 @@ app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
 
           // grab the current session id
           $scope.sessionId = appState.sessionId;
+          $scope.stationId = appState.stationId;
           console.log('getting sessionId from appState', appState.sessionId);
         });
       });
@@ -372,6 +375,11 @@ app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
           console.log('start video player');
           $timeout(function(){
             $scope.showLoader = true;
+
+            // reset the session and station id on initial load so it's not confusing
+            // on the ui
+            $scope.sessionId = '';
+            $scope.stationId = '';
           });
         }
       });
