@@ -96,6 +96,7 @@ app.controller('SearchCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '$
 
   $scope.search = function(){
     $scope.searching = true;
+    $scope.lastSearchTerm = $scope.searchTerm;
 
     if($scope.searchTerm === ''){
       $scope.searching = false;
