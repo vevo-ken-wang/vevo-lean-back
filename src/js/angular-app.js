@@ -302,7 +302,7 @@ app.factory('AppState', function(){
 // region Directives
 //===============================
 
-app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$location', '$document', function($rootScope, $timeout, $sce, $interval, $location, $document){
+app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$location', '$document', 'AppState', function($rootScope, $timeout, $sce, $interval, $location, $document, appState){
   return {
     restrict: 'E',
     templateUrl: '/views/directives/player.html',
@@ -337,6 +337,10 @@ app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
           // also update page title
           var artist = (videoObj.track.artist_name || videoObj.track.main_artist_name);
           $document.title = artist + " - " + videoObj.track.title;
+
+          // grab the current session id
+          $scope.sessionId = appState.sessionId;
+          console.log('getting sessionId from appState', appState.sessionId);
         });
       });
 

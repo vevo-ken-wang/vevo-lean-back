@@ -3,6 +3,10 @@
   <div class="artist-name">{{video.track.artist_name || video.track.main_artist_name}} <span class="track-title">{{video.track.title}}</span></div>
 </div>
 
+<div class="debug-session-id">
+    {{sessionId}}
+</div>
+
 <div class="player-controls ui" ng-class="{ 'visible': videoReady }">
   <i class="icon thumbs outline up" ng-click="like()" ng-if="!liked"></i>
   <i class="icon thumbs up" ng-if="liked"></i>
