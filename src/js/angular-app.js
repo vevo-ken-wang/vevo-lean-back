@@ -154,7 +154,8 @@ app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '
 
   console.log("session id 1? ", appState.sessionId);
 
-  var tryToGetTrack = function(retries, action){
+  // pass options.duration property if the action is a 'skip'
+  var tryToGetTrack = function(retries, action, options){
     if(retries === 0){
         console.log('tryToGetTrack - ' + action);
     }
@@ -167,7 +168,12 @@ app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '
       }
 
       console.log("session id 2? ", appState.sessionId);
-      apiService.getTrack(appState.stationId, appState.sessionId, action, { country: 'us' })
+      var apiOptions = { country: 'us' };
+      if(action === 'skip' && options && options.duration){
+          apiOptions.duration = options.duration;
+      }
+
+      apiService.getTrack(appState.stationId, appState.sessionId, action, apiOptions)
         .then(function(track){
 
             $timeout(function(){
@@ -222,7 +228,9 @@ app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '
 
   // skip current song
   var playerSkip = $rootScope.$on('player:skip', function(evt, data){
-    tryToGetTrack(0, 'skip');
+    var duration = Math.round(data);
+    console.log("skipping video at duration: ", duration);
+    tryToGetTrack(0, 'skip', { duration: duration });
   });
 
   // like current song
@@ -316,6 +324,8 @@ app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
       $scope.currentTime = '-';
       $scope.showSummary = false;
 
+      var player = $("#player" ,$element);
+
       $scope.trustSrc = function(src) {
         if(!src){
           return '';
@@ -389,7 +399,7 @@ app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
 
       $scope.skip = function(){
         console.log('skip video');
-        $rootScope.$emit('player:skip');
+        $rootScope.$emit('player:skip', player.get(0).currentTime);
 
         $scope.pause();
         $scope.videoReady = false;
@@ -481,7 +491,6 @@ app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
       // region Player Event handlers
       //===============================
 
-      var player = $("#player" ,$element);
       player.on('ended', function(e){
         $rootScope.$emit('player:next');
 

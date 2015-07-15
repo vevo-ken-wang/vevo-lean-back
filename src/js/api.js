@@ -724,6 +724,7 @@ module.exports = (function(){
           request
             .post(url)
             .send(postData)
+            .set('Accept', 'application/json')
             .end(function(err, res){
               if(err){
                 console.log("err: ", err);
