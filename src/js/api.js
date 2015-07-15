@@ -714,7 +714,8 @@ module.exports = (function(){
 
       var postData = {
           "catalog": "vevo",
-          "country": country ? country : "us"
+          "country": country ? country : "us",
+          "dmca": false
       };
 
       var promise = new Promise(function(resolve, reject){
