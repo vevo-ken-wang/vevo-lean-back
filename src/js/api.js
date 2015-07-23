@@ -776,6 +776,10 @@ module.exports = (function(){
         action: action ? action : ''
       };
 
+      if(action == "first"){
+          urlFormat += "&seed_date_desc"
+      }
+
       var url = S(urlFormat).template(interpolateVals).s;
 
       if(options && options.duration){
