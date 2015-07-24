@@ -776,10 +776,6 @@ module.exports = (function(){
         action: action ? action : ''
       };
 
-      if(action == "first"){
-          urlFormat += "&seed_date_desc"
-      }
-
       var url = S(urlFormat).template(interpolateVals).s;
 
       if(options && options.duration){
@@ -788,6 +784,10 @@ module.exports = (function(){
 
       if(options && options.country){
         url += ('&country=' + options.country);
+      }
+
+      if(action === "first"){
+          url += "&seed_date_desc"
       }
 
       var promise = new Promise(function(resolve, reject){
