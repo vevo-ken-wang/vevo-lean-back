@@ -765,7 +765,7 @@ module.exports = (function(){
        }
     }
     */
-    getTrack: function(stationId, sessionId, action, options){
+    getTrack: function(stationId, sessionId, action, options, useSeedDateDesc){
       console.log("API getTrack for session: ", sessionId);
       var urlFormat = 'http://{{baseUrl}}/station/{{stationId}}/{{sessionId}}?api_key={{key}}&action={{action}}';
       var interpolateVals = {
@@ -786,7 +786,7 @@ module.exports = (function(){
         url += ('&country=' + options.country);
       }
 
-      if(action === "first"){
+      if(useSeedDateDesc){
           url += "&seed_date_desc"
       }
 

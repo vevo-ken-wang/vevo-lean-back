@@ -58,6 +58,7 @@ app.controller('AppCtrl', ['$rootScope', '$scope', '$window', '$timeout', 'AppSt
   // check for username, if it doesnt exist, we need to make a user first before init to true
   var leanBackUserId = $window.localStorage.getItem('lean-back-user-id');
   var leanBackUsername = $window.localStorage.getItem('lean-back-username');
+
   console.log('init user info: ', leanBackUserId);
   if(leanBackUserId){
     $scope.init = true;
@@ -136,7 +137,7 @@ app.controller('SearchCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '$
 
 }]);
 
-app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '$routeParams', '$rootScope', '$location', function($scope, apiService, appState, $timeout, $routeParams, $rootScope, $location){
+app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '$routeParams', '$rootScope', '$location', '$window', function($scope, apiService, appState, $timeout, $routeParams, $rootScope, $location, $window){
 
   // when we're rdy, turn on video mode
   $rootScope.$emit('setVideoMode', true);
@@ -155,7 +156,7 @@ app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '
   console.log("session id 1? ", appState.sessionId);
 
   // pass options.duration property if the action is a 'skip'
-  var tryToGetTrack = function(retries, action, options){
+  var tryToGetTrack = function(retries, action, options, isFirstTimeListeningToStation){
     if(retries === 0){
         console.log('tryToGetTrack - ' + action);
     }
@@ -173,7 +174,7 @@ app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '
           apiOptions.duration = options.duration;
       }
 
-      apiService.getTrack(appState.stationId, appState.sessionId, action, apiOptions)
+      apiService.getTrack(appState.stationId, appState.sessionId, action, apiOptions, isFirstTimeListeningToStation)
         .then(function(track){
 
             $timeout(function(){
@@ -213,7 +214,29 @@ app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '
         $timeout(function(){
           appState.sessionId = session.station_session_id;
           console.log('creating new session', appState.sessionId);
-          tryToGetTrack(0, 'first');
+
+          // we need some special logic here:
+          // if this is the first time the user is playing this station, we need
+          // to pass a special parameter to the api so that senzari will make sure
+          // to generate recommendations that weigh more heavily to the current artist
+          // and also return more recent songs as well
+          var listenedStations = $window.localStorage.getItem('listened-stations');
+          if(listenedStations){
+              listenedStations = JSON.parse(listenedStations);
+          }else{
+              listenedStations = {};
+          }
+
+          window.test = listenedStations;
+          console.log("listened stations", listenedStations[appState.stationId]);
+          if(!listenedStations[appState.stationId]){
+              tryToGetTrack(0, 'first', null, isFirstTimeListeningToStation=true);
+              listenedStations[appState.stationId] = true;
+              console.log("===listened stations", listenedStations[appState.stationId]);
+              $window.localStorage.setItem('listened-stations', JSON.stringify(listenedStations));
+          }else{
+              tryToGetTrack(0, 'first');
+          }
         });
 
       }, function(err){
@@ -470,6 +493,10 @@ app.directive('player', ['$rootScope', '$timeout', '$sce', '$interval', '$locati
         }else if(action === 'skip'){
           return 'skipped';
         }
+      }
+
+      $scope.report = function(show){
+          $scope.showDebug = show;
       }
 
       $rootScope.$on('player:sessionHistoryData', function(evt, res){

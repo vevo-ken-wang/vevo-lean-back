@@ -406,10 +406,23 @@
 
       .debug-session-id{
         color: #fff;
-        z-index: 100000;
+        z-index: 1;
         position: absolute;
         left: 0;
-        bottom: 0;
+        bottom: -150px;
+        text-align: center;
+        width: 100vw;
+        background-color: rgba(122,122,122,0.5);
+        padding: 10px;
+        transition: all 0.4s ease!important;
+      }
+
+      .debug-session-id.active{
+          bottom: 50px;
+      }
+
+      .report-bug.active{
+          color: #2196F3;
       }
 
       player {
@@ -418,6 +431,12 @@
 
       .video-mode player {
           display: block;
+      }
+
+      .report-bug{
+          position: absolute;
+          left: 15px;
+          top: 15px;
       }
     </style>
   </head>

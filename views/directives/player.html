@@ -3,13 +3,16 @@
   <div class="artist-name">{{video.track.artist_name || video.track.main_artist_name}} <span class="track-title">{{video.track.title}}</span></div>
 </div>
 
-<div class="debug-session-id">
-    Station: {{stationId}}
+<div class="debug-session-id" ng-class="{'active': showDebug}">
+    <p>Please report your bugs to audrey.fischer@vevo.com and attach the station and session ids listed below.</p>
+    Station: <b><i>{{stationId}}</i></b>
     <br/>
-    Session: {{sessionId}}
+    Session: <b><i>{{sessionId}}</i></b>
 </div>
 
 <div class="player-controls ui" ng-class="{ 'visible': videoReady }">
+  <i class="icon bug report-bug" ng-click="report(true)" ng-if="!showDebug"></i>
+  <i class="icon bug report-bug active" ng-click="report(false)" ng-if="showDebug"></i>
   <i class="icon thumbs outline up" ng-click="like()" ng-if="!liked"></i>
   <i class="icon thumbs up" ng-if="liked"></i>
   <i class="icon thumbs outline down" ng-click="unlike()" ng-if="!liked"></i>
