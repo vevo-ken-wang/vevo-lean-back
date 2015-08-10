@@ -295,13 +295,15 @@ app.controller('StationCtrl', ['$scope', 'ApiService', 'AppState', '$timeout', '
 app.controller('MyStationsCtrl', ['$scope', '$rootScope', 'ApiService', '$timeout', '$location', 'AppState', function($scope, $rootScope, apiService, $timeout, $location, appState){
   console.log('my stations');
   $scope.stations = [];
+  $scope.loading = true;
 
   var userId = appState.userId;
   apiService.getUserStations(userId, { limit: 100 })
     .then(function(stations){
       $timeout(function(){
         $scope.stations = stations;
-      });
+        $scope.loading = false;
+    }, 500);
     });
 
   $scope.selectStation = function(index){

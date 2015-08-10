@@ -3,9 +3,15 @@
     <i class="circular heart icon"></i>
     My Stations
   </h2>
-  <div class="ui segment" ng-class="{ 'loading': searching }">
+  <div class="ui segment">
     <div class="ui divided items">
-      <div class="item" ng-repeat="station in stations track by $index">
+        <div class="item" ng-if="loading">
+            Loading your stations...
+        </div>
+      <div class="item" ng-if="!loading && stations && stations.length == 0">
+          You don't have any stations created yet.
+      </div>
+      <div class="item" ng-repeat="station in stations track by $index" ng-if="!loading">
         <div class="ui tiny image artist-art">
 
         </div>
